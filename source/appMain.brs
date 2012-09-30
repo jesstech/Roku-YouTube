@@ -68,7 +68,7 @@ Sub initTheme()
     theme.PosterScreenLine1Text = "#990000"
     theme.PosterScreenLine2Text = "#555555"
     'theme.BreadcrumbTextLeft = "#FFFFFF"
-    'theme.BreadcrumbTextRight = "#FFFFFF"
+    theme.BreadcrumbTextRight = "#990000"
     'theme.BreadcrumbDelimiter = "#FFFFFF"
     theme.RegistrationCodeColor = "#990000"
     'theme.RegistrationFocalColor = "#FFFFFF"

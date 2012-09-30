@@ -1,6 +1,7 @@
 Roku YouTube
 =============
 
+
 A YouTube app for the Roku DVP that supports automatic video quality switching, 
 user favorites, searches and more based on the [Picasa Web Albums Roku app](http://bitbucket.org/chrishoffman/roku-picasa/) 
 by [Chris Hoffman](http://bitbucket.org/chrishoffman).
@@ -10,6 +11,7 @@ address I've set up on my domain running Chris Hoffman's excellent [Google Apps 
 RokuLink project](https://bitbucket.org/chrishoffman/appengine-rokulink), good for
 running your own OAuth requests if my server goes down.
 
+###[https://owner.roku.com/add/3K5SKG](https://owner.roku.com/add/3K5SKG)
 
 Installation
 ------------
@@ -29,7 +31,6 @@ Download the source as a zip and upload it to your Roku device.
 
 Due to limitations in the sandboxing of development Roku channels, you can only
 have one development channel installed at a time.
-
 
 Advanced
 --------

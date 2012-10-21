@@ -40,11 +40,11 @@ Function InitOauth(appname As String, consumerkey As String, sharedsecret As Str
     this.items.push("authsecret")
     
     this.timestamp = createobject("rotimespan")
-    this.datetime = createobject("rodatetime")
+    this.datetime  = createobject("rodatetime")
     
     this.unprotectedkeys = ["oauth_consumer_key", "oauth_nonce", "oauth_signature_method", "oauth_timestamp", "oauth_version" ]
-    this.protectedkeys = ["oauth_consumer_key", "oauth_nonce", "oauth_signature_method", "oauth_timestamp", "oauth_version",  "oauth_token"]
-    this.verifierkeys = ["oauth_consumer_key", "oauth_nonce", "oauth_signature_method", "oauth_timestamp", "oauth_version",  "oauth_token","oauth_verifier"]
+    this.protectedkeys   = ["oauth_consumer_key", "oauth_nonce", "oauth_signature_method", "oauth_timestamp", "oauth_version", "oauth_token"]
+    this.verifierkeys    = ["oauth_consumer_key", "oauth_nonce", "oauth_signature_method", "oauth_timestamp", "oauth_version", "oauth_token", "oauth_verifier"]
 
     this.load()
 
@@ -98,12 +98,12 @@ Function oauth_add_params(http As Object) As Void
     if http.accessVerifier then
         keyvalues.push(m.authtoken)
         keyvalues.push(m.verifier)
-        http.addallparams(m.verifierkeys, keyvalues)
+        http.addallparams(m.verifierkeys, keyvalues, "urlParams")
     else if http.protected
         keyvalues.push(m.authtoken)
-        http.addallparams(m.protectedkeys, keyvalues)
+        http.addallparams(m.protectedkeys, keyvalues, "urlParams")
     else
-        http.addallparams(m.unprotectedkeys, keyvalues)
+        http.addallparams(m.unprotectedkeys, keyvalues, "urlParams")
     endif
 End Function
 
@@ -131,7 +131,7 @@ End Function
 Function oauth_prep(http As Object)
     m.addParams(http)
     signature = m.getSignature(http)
-    http.addParam("oauth_signature", signature)
+    http.addParam("oauth_signature", signature, "urlParams")
 End Function
 
 
@@ -153,7 +153,7 @@ Function oauth_get_signature_base_string(httpObj As Object) as String
     sig_base_str =  URLEncode(UCase(httpObj.method))
     sig_base_str = sig_base_str + "&" + URLEncode(httpObj.base)
 
-    params = httpObj.GetParams()
+    params = httpObj.GetParams("urlParams")
 
     if not params.empty() then sig_base_str = sig_base_str + "&" + UrlEncode(params.encode())
 

@@ -81,9 +81,11 @@ Function http_prep(method="" As String)
     urlobj.SetCertificatesFile("common:/certs/ca-bundle.crt")
     urlobj.EnableEncodings(true)
     urlobj.AddHeader("Expect","")
+    urlobj.RetainBodyOnError(true) 
     url = m.GetUrl()
     urlobj.SetUrl(url)
-    if m.method<>"" and m.method<>method then urlobj.SetRequest(m.method)
+    if m.method<>"" and m.method<>method then m.method=method 
+    urlobj.SetRequest(m.method)
     HttpActive().replace(m,urlobj)
     m.timer.mark()
 End Function
@@ -225,8 +227,17 @@ REM Return empty string on timeout
 REM
 REM ******************************************************
 
-Function http_get_to_string_with_timeout(seconds as Integer) as String
-    m.Prep("GET")
+Function http_get_to_string_with_timeout(seconds as Integer, headers=invalid As Object) as String
+    if m.method=invalid then m.method = "GET"
+    m.Prep(m.method)
+
+    if headers<>invalid then
+        for each key in headers
+            print key,headers[key]
+            m.Http.AddHeader(key, headers[key])
+        end for
+    end if
+
     if (m.Http.AsyncGetToString()) then m.Wait(seconds)
     return m.response
 End Function
@@ -240,8 +251,17 @@ REM Return empty string on timeout
 REM
 REM ******************************************************
 
-Function http_post_from_string_with_timeout(val As String, seconds as Integer) as String
-    m.Prep("POST")
+Function http_post_from_string_with_timeout(val As String, seconds as Integer, headers=invalid As Object) as String
+    if m.method=invalid then m.method = "POST"
+    m.Prep(m.method)
+
+    if headers<>invalid then
+        for each key in headers
+            print key,headers[key]
+            m.Http.AddHeader(key, headers[key])
+        end for
+    end if
+
     if (m.Http.AsyncPostFromString(val)) then m.Wait(seconds)
     return m.response
 End Function

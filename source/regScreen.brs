@@ -370,6 +370,7 @@ Function checkRegistrationStatus(sn As String, regCode As String) As Integer
                         return 3
                     endif
                 else if e.GetName() = "oauth_verifier" then
+                    print "got oauth_verifier: "+e.GetBody()
                     oa.verifier = e.GetBody()
                     return 0
                 endif

@@ -23,6 +23,139 @@ Function RegDelete(key, section=invalid)
     sec.Flush()
 End Function
 
+' registry tools
+Function RegistryDump() as integer
+    print "Dumping Registry"
+    r = CreateObject("roRegistry")
+    sections = r.GetSectionList()
+    if (sections.Count() = 0)
+        print "No sections in registry"
+    endif
+    for each section in sections
+        print "section=";section
+        s = CreateObject("roRegistrySection",section)
+        keys = s.GetKeyList()
+        for each key in keys
+            val = s.Read(key)
+            print "    ";key;" : "; val
+        end for
+    end for
+    return sections.Count()
+End Function
+
+'*************************************************************'
+'*                     SORT ROUTINES                         *'
+'*************************************************************'
+
+' simple quicksort of an array of values
+Function internalQSort(A as Object, left as integer, right as integer) as void
+    i = left
+    j = right
+    pivot = A[(left+right)/2]
+    while i <= j
+        while A[i] < pivot
+            i = i + 1
+        end while
+        while A[j] > pivot
+            j = j - 1
+        end while
+        if (i <= j)
+            tmp = A[i]
+            A[i] = A[j]
+            A[j] = tmp
+            i = i + 1
+            j = j - 1
+        end if
+    end while
+    if (left < j)
+        internalQSort(A, left, j)
+    endif
+    if (i < right)
+        internalQSort(A, i, right)
+    end if        
+End Function
+
+' quicksort an array using a function to extract the compare value
+Function internalKeyQSort(A as Object, key as object, left as integer, right as integer) as void
+    i = left
+    j = right
+    pivot = key(A[(left+right)/2])
+    while i <= j
+        while key(A[i]) < pivot
+            i = i + 1
+        end while
+        while key(A[j]) > pivot
+            j = j - 1
+        end while
+        if (i <= j)
+            tmp = A[i]
+            A[i] = A[j]
+            A[j] = tmp
+            i = i + 1
+            j = j - 1
+        end if
+    end while
+    if (left < j)
+        internalKeyQSort(A, key, left, j)
+    endif
+    if (i < right)
+        internalKeyQSort(A, key, i, right)
+    end if        
+End Function
+
+' quicksort an array using an indentically sized array that holds the comparison values
+Function internalKeyArrayQSort(A as Object, keys as object, left as integer, right as integer) as void
+    i = left
+    j = right
+    pivot = keys[A[(left+right)/2]]
+    while i <= j
+        while keys[A[i]] < pivot
+            i = i + 1
+        end while
+        while keys[A[j]] > pivot
+            j = j - 1
+        end while
+        if (i <= j)
+            tmp = A[i]
+            A[i] = A[j]
+            A[j] = tmp
+            i = i + 1
+            j = j - 1
+        end if
+    end while
+    if (left < j)
+        internalKeyArrayQSort(A, keys, left, j)
+    endif
+    if (i < right)
+        internalKeyArrayQSort(A, keys, i, right)
+    end if        
+End function
+
+'******************************************************
+' QuickSort(Array, optional keys function or array)
+' Will sort an array directly
+' If key is a function it is called to get the value for comparison
+' If key is an identically sized array as the array to be sorted then
+' the comparison values are pulled from there. In this case the Array
+' to be sorted should be an array if integers 0 .. arraysize-1
+'******************************************************
+Function QuickSort(A as Object, key=invalid as dynamic) as void
+    atype = type(A)
+    if atype<>"roArray" then return
+    ' weed out trivial arrays
+    arraysize = A.Count()
+    if arraysize < 2 then return
+    if (key=invalid) then
+        internalQSort(A, 0, arraysize - 1)
+    else
+        keytype = type(key)
+        if keytype="Function" then
+            internalKeyQSort(A, key, 0, arraysize - 1)
+        else if (keytype="roArray" or keytype="Array") and key.count() = arraysize then
+            internalKeyArrayQSort(A, key, 0, arraysize - 1)
+        end if
+    end if
+End Function
 
 '******************************************************
 'Insertion Sort
@@ -69,87 +202,19 @@ sub SortedInsert(A as object, value as string)
     endif
     ' should do a binary search, but at least this is better than push and sort
     for i = count-1 to 0 step -1
-        if value >= a[i]
+        if value >= a[i] then
             a[i+1] = value
             return
-        endif
+        end if
         a[i+1] = a[i]
     end for
     a[0] = value
 end sub
 
-sub internalQSort(A as Object, left as integer, right as integer)
-    i = left
-    j = right
-    pivot = A[(left+right)/2]
-    while i <= j
-        while A[i] < pivot
-            i = i + 1
-        end while
-        while A[j] > pivot
-            j = j - 1
-        end while
-        if (i <= j)
-            tmp = A[i]
-            A[i] = A[j]
-            A[j] = tmp
-            i = i + 1
-            j = j - 1
-        end if
-    end while
-    if (left < j)
-        internalQSort(A, left, j)
-    endif
-    if (i < right)
-        internalQSort(A, i, right)
-    end if        
-end sub
 
-sub internalKeyQSort(A as Object, key as dynamic, left as integer, right as integer)
-    i = left
-    j = right
-    pivot = key(A[(left+right)/2])
-    while i <= j
-        while key(A[i]) < pivot
-            i = i + 1
-        end while
-        while key(A[j]) > pivot
-            j = j - 1
-        end while
-        if (i <= j)
-            tmp = A[i]
-            A[i] = A[j]
-            A[j] = tmp
-            i = i + 1
-            j = j - 1
-        end if
-    end while
-    if (left < j)
-        internalKeyQSort(A, key, left, j)
-    endif
-    if (i < right)
-        internalKeyQSort(A, key, i, right)
-    end if        
-end sub
-
-'******************************************************
-'Quick Sort
-'Will sort an array directly, or use a key function
-'******************************************************
-Sub QuickSort(A as Object, key=invalid as dynamic)
-    if type(A)<>"roArray" then return
-    ' weed out trivial arrays
-    if A.count() < 2 then return
-
-    if (key=invalid) then
-        internalQSort(A, 0, A.count() - 1)
-    else
-        if type(key)<>"Function" then return
-
-        internalKeyQSort(A, key, 0, A.count() - 1)
-    end if
-End Sub
-
+'******************************************************'
+'*         MISC UTILITIES                             *'
+'******************************************************'
 
 '******************************************************
 'Convert anything to a string

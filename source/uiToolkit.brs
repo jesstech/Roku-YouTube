@@ -3,16 +3,24 @@
 '
 '    Display "menu" items in a Poster Screen.   
 '
-Function uitkPreShowPosterMenu(breadA=invalid, breadB=invalid) As Object
+Function uitkPreShowPosterMenu(ListStyle="flat-category" as String, breadA=invalid, breadB=invalid) As Object
 	port=CreateObject("roMessagePort")
 	screen = CreateObject("roPosterScreen")
 	screen.SetMessagePort(port)
+
 	if breadA<>invalid and breadB<>invalid then
 		screen.SetBreadcrumbText(breadA, breadB)
+    elseif breadA<>invalid and breadB = invalid then
+        screen.SetTitle(breadA)
 	end if
-	screen.SetListStyle("flat-category")
-	'screen.SetListDisplayMode("best-fit")
-	screen.SetListDisplayMode("zoom-to-fill")
+
+    if ListStyle = "" OR ListStyle = invalid then
+        ListStyle = "flat-category"
+    end if
+
+	screen.SetListStyle(ListStyle)
+	screen.SetListDisplayMode("scale-to-fit")
+	REM screen.SetListDisplayMode("zoom-to-fill")
 	screen.Show()
 
 	return screen
@@ -34,7 +42,7 @@ Function uitkDoPosterMenu(posterdata, screen, onselect_callback=invalid) As Inte
 		print "uitkDoPosterMenu | msg type = ";type(msg)
 		
 		if type(msg) = "roPosterScreenEvent" then
-			print "event.GetType()=";msg.GetType(); " Event.GetMessage()= "; msg.GetMessage()
+			print "event.GetType()=";msg.GetType(); " event.GetMessage()= "; msg.GetMessage()
 			if msg.isListItemSelected() then
 				if onselect_callback<>invalid then
 					selecttype = onselect_callback[0]

@@ -67,7 +67,7 @@ End Sub
 
 Sub ShowErrorDialog(text As dynamic, title=invalid as dynamic)
     if not isstr(text) text = "Unspecified error"
-    if not isstr(title) title = ""
+    if not isstr(title) title = "Error"
     ShowDialog1Button(title, text, "Done")
 End Sub
 
@@ -76,7 +76,7 @@ End Sub
 'Return: nothing
 '******************************************************
 
-Sub ShowDialog1Button(title As dynamic, text As dynamic, but1 As String)
+Sub ShowDialog1Button(title As dynamic, text As dynamic, but1 As String, quickReturn=false As Boolean)
     if not isstr(title) title = ""
     if not isstr(text) text = ""
 
@@ -90,6 +90,8 @@ Sub ShowDialog1Button(title As dynamic, text As dynamic, but1 As String)
     dialog.SetText(text)
     dialog.AddButton(0, but1)
     dialog.Show()
+
+    if quickReturn=true then return
 
     while true
         dlgMsg = wait(0, dialog.GetMessagePort())

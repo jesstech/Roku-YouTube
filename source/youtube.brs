@@ -391,7 +391,7 @@ Function GetVideoMetaData(videos As Object)
     for each video in videos
         meta=CreateObject("roAssociativeArray")
         meta.ContentType="movie"
-
+        
         meta.ID=video.GetID()
         meta.Author=video.GetAuthor()
         meta.Title=video.GetTitle()
@@ -403,6 +403,8 @@ Function GetVideoMetaData(videos As Object)
         meta.SDPosterUrl=video.GetThumb()
         meta.HDPosterUrl=video.GetThumb()
 
+        meta.xml=video.xml
+        meta.UserID=video.GetUserID()
         meta.EditLink=video.GetEditLink(video.xml)
 
         meta.StreamFormat="mp4"

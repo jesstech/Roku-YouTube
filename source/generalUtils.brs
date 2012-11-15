@@ -609,7 +609,7 @@ Sub PrintAA(aa as Object)
             cnt = cnt + 1
         next
         if cnt = 0
-            PrintAny(0, "Nothing from for each. Looks like :", aa)
+            PrintAny(0, "Nothing from foreach. Looks like :", aa)
         endif
     endif
     print "------------"

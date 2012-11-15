@@ -221,7 +221,7 @@ Sub youtube_add_favorite(video As Object, buttons={} As Object)
 
     if tostr(response.error) = "" and int(response.status) = 201 then
         ShowDialog1Button("Added", "The video was added to your favorites.", "OK")
-        m.video.EditLink=get_edit_link(response.xml)
+        m.video.EditLink=get_xml_edit_link(response.xml)
         m.UpdateButtons(buttons)
         m.screen.AddButton(3, "Remove from Favorites")
     else 
@@ -371,14 +371,14 @@ Function youtube_new_video(xml As Object) As Object
     video.youtube=m
     video.xml=xml
     video.GetID=function():return m.xml.GetNamedElements("media:group")[0].GetNamedElements("yt:videoid")[0].GetText():end function
-    video.GetAuthor=function():return m.xml.GetNamedElements("media:group")[0].GetNamedElements("media:credit").GetAttributes()["yt:display"]:end function
+    video.GetAuthor=get_xml_author
     video.GetUserID=function():return m.xml.GetNamedElements("media:group")[0].GetNamedElements("yt:uploaderId")[0].GetText():end function
     video.GetTitle=function():return m.xml.title[0].GetText():end function
     video.GetCategory=function():return m.xml.GetNamedElements("media:group")[0].GetNamedElements("media:category")[0].GetText():end function
     video.GetDesc=function():return Left(m.xml.GetNamedElements("media:group")[0].GetNamedElements("media:description")[0].GetText(), 300):end function
-    video.GetRating=get_Rating
-    video.GetThumb=get_thumb
-    video.GetEditLink=get_edit_link
+    video.GetRating=get_xml_rating
+    video.GetThumb=get_xml_thumb
+    video.GetEditLink=get_xml_edit_link
     'video.GetLinks=function():return m.xml.GetNamedElements("link"):end function
     'video.GetURL=video_get_url
     return video
@@ -419,14 +419,23 @@ Function GetVideoMetaData(videos As Object)
     return metadata
 End Function
 
-Function get_rating() As Dynamic
+Function get_xml_author() As Dynamic
+    credits=m.xml.GetNamedElements("media:group")[0].GetNamedElements("media:credit")
+    if credits.Count()>0 then
+        for each author in credits
+            if author.GetAttributes()["role"] = "uploader" then return author.GetAttributes()["yt:display"]
+        end forREM 
+    end if
+End Function
+
+Function get_xml_rating() As Dynamic
     if m.xml.GetNamedElements("gd:rating").Count()>0 then
         return m.xml.GetNamedElements("gd:rating").GetAttributes()["average"].toInt()*20
     end if
     return invalid
 End Function
 
-Function get_edit_link(xml) As Dynamic
+Function get_xml_edit_link(xml) As Dynamic
     links=xml.GetNamedElements("link")
     if links.Count()>0 then
         for each link in links
@@ -437,7 +446,7 @@ Function get_edit_link(xml) As Dynamic
     return invalid
 End Function
 
-Function get_thumb() As Dynamic
+Function get_xml_thumb() As Dynamic
     thumbs=m.xml.GetNamedElements("media:group")[0].GetNamedElements("media:thumbnail")
     if thumbs.Count()>0 then
         for each thumb in thumbs

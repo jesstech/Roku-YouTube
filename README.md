@@ -27,7 +27,7 @@ address. Open up a standard web browser and visit the following URL:
 
     http://<rokuPlayer-ip-address> (for example, http://192.168.1.6)
 
-Download the source as a zip and upload it to your Roku device.
+[Download the source as a zip](https://bitbucket.org/jesstech/roku-youtube/get/master.zip) and upload it to your Roku device.
 
 Due to limitations in the sandboxing of development Roku channels, you can only
 have one development channel installed at a time.

@@ -424,7 +424,7 @@ Function get_xml_author() As Dynamic
     if credits.Count()>0 then
         for each author in credits
             if author.GetAttributes()["role"] = "uploader" then return author.GetAttributes()["yt:display"]
-        end forREM 
+        end for
     end if
 End Function
 

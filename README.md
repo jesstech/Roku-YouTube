@@ -28,8 +28,9 @@ address. Open up a standard web browser and visit the following URL:
     http://<rokuPlayer-ip-address> (for example, http://192.168.1.6)
 
 [Download the source as a zip](https://bitbucket.org/jesstech/roku-youtube/get/master.zip) - 
-unfortunately the manifest file needs to be in the root of the zip, so you need to extract this zip,
-and then re-compress the first level folder as it's own zip and upload that to your roku.
+unfortunately the manifest file needs to be in the root of the archive uploaded to the Roku, 
+so you need to extract this zip, and then recompress the first level folder as its own zip and 
+upload that to your Roku.
 
 Due to limitations in the sandboxing of development Roku channels, you can only
 have one development channel installed at a time.
